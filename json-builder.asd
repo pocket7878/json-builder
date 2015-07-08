@@ -16,7 +16,8 @@
   :version "0.1"
   :author "Masato Sogame"
   :license ""
-  :depends-on ()
+  :depends-on (:cl-json
+               :cl-annot)
   :components ((:module "src"
                 :components
                 ((:file "json-builder"))))
