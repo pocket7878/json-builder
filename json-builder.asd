@@ -17,7 +17,8 @@
   :author "Masato Sogame"
   :license ""
   :depends-on (:cl-json
-               :cl-annot)
+               :cl-annot
+               :alexandria)
   :components ((:module "src"
                 :components
                 ((:file "json-builder"))))

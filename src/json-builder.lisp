@@ -3,7 +3,10 @@
   (:use :cl)
   (:import-from :cl-json
                 :encode-json
-                :encode-json-to-string))
+                :encode-json-to-string)
+  (:import-from :alexandria
+                :make-keyword
+                :symbolicate))
 (in-package :json-builder)
 
 (annot:enable-annot-syntax)
@@ -50,7 +53,20 @@
               (funcall fn json item)
               (if (dirty json)
                   (add-value jbuilder (data json))))
-          (add-value jbuilder item))))
+            (add-value jbuilder item))))
+
+@export
+(defmethod extract! ((jbuilder <json-builder>) obj &rest keys)
+  (if keys
+      (loop for key in keys
+         do
+           (let* ((key (make-keyword key))
+                  (slot-name (symbolicate (symbol-name key))))
+             (key jbuilder key (slot-value obj slot-name))))
+      (loop for slot in (c2mop:class-direct-slots (class-of obj))
+         do
+           (let ((slot-name (c2mop:slot-definition-name slot)))
+             (key jbuilder (make-keyword slot-name) (slot-value obj slot-name))))))
 
 @export
 (defun build (builder-fn)
