@@ -16,11 +16,11 @@
           :initform nil)
    (data :initarg :data
          :reader data
-         :initform nil)))
+         :initform (make-hash-table))))
 
-(defmethod add-value ((jbuilder <json-builder>) value)
-  (setf (slot-value jbuilder 'dirty) t)
-  (pushnew value (slot-value jbuilder 'data)))
+(defmethod add-value ((jbuilder <json-builder>) key value)
+  (setf (slot-value jbuilder 'dirty) t
+        (gethash key (data jbuilder) nil) value))
 
 @export
 (defgeneric encode (jbuilder &optional stream))
@@ -41,19 +41,24 @@
   (if (functionp value-form)
       (let ((json (make-instance '<json-builder>)))
         (funcall value-form json)
-        (add-value jbuilder (cons key (data json))))
-    (add-value  jbuilder (cons key value-form))))
+        (when (dirty json)
+          (add-value jbuilder key (data json))))
+    (add-value jbuilder key value-form)))
 
 @export
 (defmethod array! ((jbuilder <json-builder>) seq &optional fn)
-  (loop for item in (reverse seq)
-        do
-        (if fn
-            (let ((json (make-instance '<json-builder>)))
-              (funcall fn json item)
-              (if (dirty json)
-                  (add-value jbuilder (data json))))
-            (add-value jbuilder item))))
+  (setf (slot-value jbuilder 'dirty) t
+        (slot-value jbuilder 'data)
+        (let ((acc nil))
+          (loop for item in (reverse seq)
+             do
+               (if fn
+                   (let ((json (make-instance '<json-builder>)))
+                     (funcall fn json item)
+                     (if (dirty json)
+                         (pushnew (data json) acc)))
+                   (pushnew item acc)))
+          acc)))
 
 @export
 (defmethod extract! ((jbuilder <json-builder>) obj &rest keys)

@@ -9,6 +9,45 @@
 
 (plan nil)
 
-;; blah blah blah.
+(is (encode-to-string
+     (build (lambda (json))))
+    "{}")
+
+(is (encode-to-string
+     (build (lambda (json)
+              (key json :id 10))))
+    "{\"id\":10}")
+
+(is (encode-to-string
+     (build (lambda (json)
+              (key json :id 10)
+              (key json :foo "bar"))))
+    "{\"foo\":\"bar\",\"id\":10}")
+
+(is (encode-to-string
+     (build (lambda (json)
+              (array! json '(1 2 3)))))
+    "[1,2,3]")
+
+(is (encode-to-string
+     (build (lambda (json)
+              (array! json '(1 2 3) (lambda (json item)
+                                      (key json :id item))))))
+    "[{\"id\":1},{\"id\":2},{\"id\":3}]")
+
+(is (encode-to-string
+     (build (lambda (json)
+              (key json :id 10)
+              (array! json '(1 2 3) (lambda (json item)
+                                      (key json :id item))))))
+    "[{\"id\":1},{\"id\":2},{\"id\":3}]")
+
+(defstruct foo
+  id name)
+
+(is (encode-to-string
+     (build (lambda (json)
+              (extract! json (make-foo :id 1 :name "Foo")))))
+    "{\"name\":\"Foo\",\"id\":1}")
 
 (finalize)

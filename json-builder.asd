@@ -18,7 +18,8 @@
   :license ""
   :depends-on (:cl-json
                :cl-annot
-               :alexandria)
+               :alexandria
+               :closer-mop)
   :components ((:module "src"
                 :components
                 ((:file "json-builder"))))
