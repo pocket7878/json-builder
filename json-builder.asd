@@ -16,7 +16,7 @@
   :version "0.1"
   :author "Masato Sogame"
   :license ""
-  :depends-on (:cl-json
+  :depends-on (:jonathan
                :cl-annot
                :alexandria
                :closer-mop)

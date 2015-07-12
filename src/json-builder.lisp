@@ -1,9 +1,8 @@
 (in-package :cl-user)
 (defpackage json-builder
   (:use :cl)
-  (:import-from :cl-json
-                :encode-json
-                :encode-json-to-string)
+  (:import-from :jonathan
+                :to-json)
   (:import-from :alexandria
                 :make-keyword
                 :symbolicate))
@@ -23,18 +22,11 @@
         (gethash key (data jbuilder) nil) value))
 
 @export
-(defgeneric encode (jbuilder &optional stream))
+(defgeneric encode (jbuilder))
 
 @export
-(defmethod encode ((jbuilder <json-builder>) &optional (stream cl-json:*json-output*))
-  (encode-json (data jbuilder) stream))
-
-@export
-(defgeneric encode-to-string (jbuilder))
-
-@export
-(defmethod encode-to-string ((jbuilder <json-builder>))
-  (encode-json-to-string (data jbuilder)))
+(defmethod encode ((jbuilder <json-builder>))
+  (to-json (data jbuilder)))
 
 @export
 (defmethod key ((jbuilder <json-builder>) key value-form)
