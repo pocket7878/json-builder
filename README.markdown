@@ -47,8 +47,8 @@ If value-form is not a function, then key-value pair is added to &lt;json-builde
 
 - array! (&lt;json-builder&gt; seq &optional fn)
 
-if fn is given then fn is called with two arguments (&lt;json-builder&gt; item-in-seq).
-if fn is not given then seq is directly added to &lt;json-builder&gt;
+if fn is given then fn is called with two arguments (&lt;json-builder&gt; item-in-seq) and then replace data with results.
+if fn is not given then seq is directly replace data of &lt;json-builder&gt;
 
 ```lisp
 (encode
